@@ -18,6 +18,9 @@ namespace Mobile_Cust_LstViews
             //InitializeComponent();
             InitializeDummyData();
             _songListView = new CustomListView(ListViewCachingStrategy.RetainElement, _songs);
+            _songListView.ItemsSource = _songs;
+            _songListView.RowHeight = 100;
+            Content = _songListView;
         }
 
         private void InitializeDummyData()
@@ -25,22 +28,35 @@ namespace Mobile_Cust_LstViews
             _songs = new List<Song>()
             {
                 new Song() {Artist = "Red warszawa", Album = "Heavy metal og hash", Title = "Julemandens selvmordsbrev", BPM = 120, IsFavorite = true,YearReleased = 1994},
-                new Song() {Artist = "Red warszawa", Album = "Heavy metal og hash", Title = "Dødshimlen", BPM = 140, IsFavorite = false,YearReleased = 1994}
+                new Song() {Artist = "Red warszawa", Album = "Heavy metal og hash", Title = "Dødshimlen", BPM = 140, IsFavorite = false,YearReleased = 1994},
+                new Song() {Artist = "Puscifer", Album = "Conditions of my Parole", Title = "Horizon", BPM = 108, IsFavorite = true,YearReleased = 2008},
+                new Song() {Artist = "Puscifer", Album = "Donkey Punched the Night Away(EP)", Title = "Dear Brother", BPM = 110, IsFavorite = false,YearReleased = 1994},
+                new Song() {Artist = "Red warszawa", Album = "Heavy metal og hash", Title = "Dødshimlen", BPM = 140, IsFavorite = false,YearReleased = 1994},
+                new Song() {Artist = "Red warszawa", Album = "Heavy metal og hash", Title = "Dødshimlen", BPM = 140, IsFavorite = false,YearReleased = 1994},
+                new Song() {Artist = "Red warszawa", Album = "Heavy metal og hash", Title = "Dødshimlen", BPM = 140, IsFavorite = true,YearReleased = 1994},
+                new Song() {Artist = "Red warszawa", Album = "Heavy metal og hash", Title = "Dødshimlen", BPM = 140, IsFavorite = false,YearReleased = 1994},
             };
         }
     }
 
     class CustomListView : ListView
     {
-
+        private List<Song> _songs;
         public CustomListView(ListViewCachingStrategy strategy, List<Song> songs) : base(strategy)
         {
-            
+            _songs = songs;
+            ItemTemplate = new DataTemplate(typeof(SongCell));
         }
 
         protected override void SetupContent(Cell content, int index)
         {
             base.SetupContent(content, index);
+            SongCell currentViewCell = content as SongCell;
+            if (currentViewCell != null)
+            {
+                currentViewCell.View.BackgroundColor = index % 2 == 0 ? Color.Blue : Color.Aqua;
+                currentViewCell.SetFavorite(_songs[index].IsFavorite);
+            }
         }
     }
 
@@ -57,7 +73,6 @@ namespace Mobile_Cust_LstViews
         Label _album;
         Label _yearReleased;
         Label _bpm;
-        private const string favoriteURL = "../images";
 
         public SongCell()
         {
@@ -90,16 +105,20 @@ namespace Mobile_Cust_LstViews
             _desciptionStack.Children.Add(_metaData2);
             _cellLayout.Children.Add(_desciptionStack);
             _cellLayout.Children.Add(_isFavorite);
-            
+
             _metaData1.Children.Add(_title);
             _metaData1.Children.Add(_artist);
             _metaData1.Children.Add(_album);
             _metaData2.Children.Add(_yearReleased);
             _metaData2.Children.Add(_bpm);
 
-
-
+            View = _cellLayout;
         }
 
+        public void SetFavorite(bool isFavorite)
+        {
+            
+            _isFavorite.Source = isFavorite ? "up.png" : "down.png";
+        }
     }
 }
